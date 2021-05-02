@@ -19,4 +19,8 @@ class Monster
   def passed?
     @status == 'passed'
   end
+
+  def challenge
+    OpenStruct.new(title: "What is the result of multiplication #{first} and #{second}", regex: /\d+\S/)
+  end
 end

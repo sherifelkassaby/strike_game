@@ -6,11 +6,11 @@ module GameServices
       @prompt = TTY::Prompt.new
       @room_count = 1
       @game = game
+      @player = @game.player
     end
 
     def call
       main_room_welcome_message
-      assign_game_player
 
       game_sequence
     rescue Errors::Exit
@@ -23,26 +23,29 @@ module GameServices
       puts('Welcome to the first room of the game')
     end
 
-    def assign_game_player
-      @player = @game.player
-    end
-
     def game_sequence
       keep_playing = true
       until keep_playing == false
         system('clear')
         create_child_rooms if @player.current_room&.child_rooms&.empty?
         move_player_prompt
-        meet_event_prompt
+        next unless @player.current_room.event
+
+        event_choice = meet_event_prompt
+        next unless event_choice != 'go back'
+
+        solution = event_challenge_prompt
+        pass_event if solution
       end
     end
 
     def create_child_rooms
       parent_room = @player.current_room
+      room_count ||= 0
 
       3.times do
-        @room_count += 1
-        title = "room #{@room_count}"
+        room_count += 1
+        title = "room #{room_count}"
         room = Room.new(game: @game, title: title, parent_room: parent_room)
         parent_room.child_rooms << room
       end
@@ -56,7 +59,7 @@ module GameServices
       choices << { name: 'exit', value: nil }
 
       puts('There are rooms ahead of you')
-      room_chosen = @prompt.select('Choose where would like to go?', choices, active_color: :red)
+      room_chosen = @prompt.select('Choose where would you like to go?', choices, active_color: :red)
       raise Errors::Exit unless room_chosen
 
       @player.current_room = room_chosen
@@ -70,9 +73,28 @@ module GameServices
 
       choices = event.choices.concat(['go back'])
       event_choice = @prompt.select("You are ahead of #{event.title}?", choices, active_color: :red)
-      return @player.current_room = current_room.parent_room if event_choice == 'go back'
+      @player.current_room = current_room.parent_room if event_choice == 'go back'
 
-      event.pass!
+      event_choice
+    end
+
+    def event_challenge_prompt
+      event = @player.current_room.event
+      challenge = event.challenge
+
+      solution = @prompt.ask(challenge[:title]) do |q|
+        q.required true
+        q.validate challenge[:regex]
+      end
+      check = event.check_solution(solution)
+      puts "#######", check
+      sleep(10)
+    end
+
+    def pass_event
+      puts('you have passed it')
+      sleep(2)
+      @player.current_room.event.pass!
     end
   end
 end
