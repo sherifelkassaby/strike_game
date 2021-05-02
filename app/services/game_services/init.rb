@@ -1,6 +1,8 @@
 module GameServices
   class Init
-    @@prompt = TTY::Prompt.new
+    def initialize
+      @prompt = TTY::Prompt.new
+    end
 
     def call
       welcome_message
@@ -23,13 +25,13 @@ module GameServices
     end
 
     def ready_prompt
-      action = @@prompt.select('Are you ready?', %w(Yes No), active_color: :red)
+      action = @prompt.select('Are you ready?', %w[Yes No], active_color: :red)
       action == 'Yes'
     end
 
     def player_name(player)
       system('clear')
-      name = @@prompt.ask('What is your nick name?') do |q|
+      name = @prompt.ask('What is your nick name?') do |q|
         q.required true
         q.validate /\A\w+\Z/
         q.modify   :capitalize
