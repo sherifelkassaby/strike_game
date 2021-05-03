@@ -9,7 +9,9 @@ module GameServices
       return player_not_ready_rsp unless ready_prompt
 
       @game = Game.new
-      set_defaults
+      create_first_level
+      create_rooms
+      assign_player
       set_player_name
 
       success_rsp
@@ -31,9 +33,20 @@ module GameServices
       action == 'Yes'
     end
 
-    def set_defaults
-      @game.main_room = Room.new(game: @game, title: 'main')
-      @game.player = Player.new(game: @game)
+    def create_first_level
+      @level1 = Level.new(number: 1)
+      @game.add_level(@level1)
+    end
+
+    def create_rooms
+      3.times do |i|
+        title = "room 10#{i}"
+        @level1.rooms << Room.new(title: title, level: @level1)
+      end
+    end
+
+    def assign_player
+      @game.player = Player.new(game: @game, current_level: @level1)
     end
 
     def set_player_name
