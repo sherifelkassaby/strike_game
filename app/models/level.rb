@@ -1,7 +1,8 @@
 class Level
-  attr_reader :number, :nxt, :prv
+  attr_reader :number
+  attr_accessor :nxt, :prv
 
-  def initialize(number, nxt = nil, prv = nil)
+  def initialize(number:, nxt: nil, prv: nil)
     @number = number
     @nxt = nxt
     @prv = prv
@@ -12,8 +13,7 @@ class Level
   end
 
   def completed?
-    # rooms.any? { |room| room.status == 'not_passed' }
-    true
+    rooms.all?(&:passed?)
   end
 
   private

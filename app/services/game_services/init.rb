@@ -9,6 +9,7 @@ module GameServices
       return player_not_ready_rsp unless ready_prompt
 
       @game = Game.new
+
       create_first_level
       create_rooms
       assign_player
@@ -25,7 +26,9 @@ module GameServices
       system('clear')
       puts('Welcome to our game')
       puts('Here is the instructions')
-      puts('If you want exit the game anytime press ^C')
+      puts('- You need to pass all rooms in your level to open the next level')
+      puts('- Each room has a challenge which will be a surprise when you enter the room')
+      puts('- Take care of yourself while you are playing')
     end
 
     def ready_prompt

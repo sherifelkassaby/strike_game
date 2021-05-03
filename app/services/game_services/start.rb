@@ -25,53 +25,23 @@ module GameServices
 
     def game_sequence
       keep_playing = true
-      until keep_playing == false
+
+      while keep_playing
         system('clear')
-
-        # next_move = next_move_decision
-        # make_next_move(next_move)
-        case @player.move[:type]
-        when 'room_or_level'
-          send("#{@player.move[:type]}_move_prompt")
-          send("#{@player.move[:type]}_move")
-          # @player.move[:type] = @player.find_next_move(@player.move[:type])
-        when 'event_decision'
-          event_decision_move_prompt
-          event_decision_move
-          # @player.move[:type] = @player.find_next_move(@player.move[:type])
-        when 'event_challenge'
-          event_challenge_move_prompt
-          event_challenge_move
-          # @player.move[:type] = @player.find_next_move(@player.move[:type])
-        when 'event_passed'
-          event_passed_move_prompt
-          event_passed_move
-          # @player.move[:type] = @player.find_next_move(@player.move[:type])
-        end
-
-        # event_choice = meet_event_prompt
-        # solution = event_challenge_prompt
-        # pass_event if solution
+        set_next_move
+        execute_next_move
       end
     end
 
-    # def check_
-    #   @player.current_room&.child_rooms&.empty?
-    # end
+    def set_next_move
+      send("set_next_#{@player.move[:type]}")
+    end
 
-    # def create_child_rooms
-    #   parent_room = @player.current_room
-    #   room_count ||= 0
+    def execute_next_move
+      send("move_to_#{@player.move[:type]}")
+    end
 
-    #   3.times do
-    #     room_count += 1
-    #     title = "room #{room_count}"
-    #     room = Room.new(game: @game, title: title, parent_room: parent_room)
-    #     parent_room.child_rooms << room
-    #   end
-    # end
-
-    def room_or_level_move_prompt
+    def set_next_room_or_level
       current_level = @player.current_level
       prv_level = current_level&.prv
       nxt_level = current_level&.nxt
@@ -86,51 +56,92 @@ module GameServices
       @player.move[:value] = choice
     end
 
-    def room_or_level_move
+    def move_to_room_or_level
       next_move = @player.move[:value]
       raise Errors::Exit unless next_move
 
       if next_move.is_a? Room
         @player.current_room = next_move
+        @player.move = { type: @player.find_next_move(@player.move[:type]) }
       elsif next_move.is_a? Level
         @player.current_level = next_move
+        @player.move = { type: 'room_or_level' }
       end
-      @player.move = { type: @player.find_next_move(@player.move[:type]) }
     end
 
-    def event_decision_move_prompt
+    def set_next_challenge_decision
       current_room = @player.current_room
-      event = current_room.event
+      challenge = current_room.challenge
 
-      return if !event || event.passed?
+      choices = challenge.passed? ? [] : challenge.decision_choices
 
-      choices = event.choices.concat(['go back'])
-      choice = @prompt.select("You are ahead of #{event.title}?", choices, active_color: :red)
+      question = challenge.passed? ? 'you already passed this challenge' : "You are ahead of #{challenge.title}?"
+
+      choice = @prompt.select(question, choices.concat(['go back']), active_color: :red)
       @player.move[:value] = choice
     end
 
-    def event_decision_move
+    def move_to_challenge_decision
       return @player.move = { type: 'room_or_level' } if @player.move[:value] == 'go back'
+
       @player.move = { type: @player.find_next_move(@player.move[:type]) }
     end
 
-    def event_challenge_prompt
-      event = @player.current_room.event
-      challenge = event.challenge
+    def set_next_challenge_accepted
+      challenge = @player.current_room.challenge
+      property  = challenge.property
 
-      solution = @prompt.ask(challenge[:title]) do |q|
-        q.required true
-        q.validate challenge[:regex]
-      end
-      check = event.check_solution(solution)
-      puts "#######", check
-      sleep(10)
+      output = next_challenge_accepted_prompt(property)
+
+      check = challenge.check_pass(output)
+      @player.move[:value] = check
     end
 
-    def pass_event
-      puts('you have passed it')
+    def next_challenge_accepted_prompt(property)
+      case property[:type]
+      when :ask
+        @prompt.ask(property[:title]) do |q|
+          q.required true
+          q.validate property[:regex]
+        end
+      when :select
+        @prompt.select(property[:title], property[:choices], active_color: :red)
+      end
+    end
+
+    def move_to_challenge_accepted
+      @player.move = { type: @player.find_next_move(@player.move[:type]), value: @player.move[:value] }
+    end
+
+    def set_next_challenge_passed
+      if @player.move[:value]
+        puts('you have passed it')
+      else
+        puts("Oh my God You haven't passed it plz try again later")
+      end
+
       sleep(2)
-      @player.current_room.event.pass!
+    end
+
+    def move_to_challenge_passed
+      @player.current_room.challenge.pass! if @player.move[:value]
+      @player.move = { type: @player.find_next_move(@player.move[:type]) }
+      create_next_level if @player.current_level.completed?
+    end
+
+    def create_next_level
+      current_level = @player.current_level
+      next_level = Level.new(number: current_level.number + 1, prv: current_level)
+      current_level.nxt = next_level
+      @game.add_level(next_level)
+      create_rooms(next_level)
+    end
+
+    def create_rooms(level)
+      3.times do |i|
+        title = "room #{level.number}0#{i}"
+        level.rooms << Room.new(title: title, level: level)
+      end
     end
   end
 end

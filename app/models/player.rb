@@ -3,10 +3,10 @@ class Player
   attr_accessor :name, :current_room, :current_level, :move
 
   NEXT_MOVE_MAP = {
-    'room_or_level' => 'event_decision',
-    'event_decision' => 'event_challenge',
-    'event_challenge' => 'event_passed',
-    'event_passed' => 'room_or_level'
+    'room_or_level' => 'challenge_decision',
+    'challenge_decision' => 'challenge_accepted',
+    'challenge_accepted' => 'challenge_passed',
+    'challenge_passed' => 'room_or_level'
   }.freeze
 
   def initialize(game:, current_level:)
