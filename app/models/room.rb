@@ -9,15 +9,15 @@ class Room
     set_challenge
   end
 
+  def set_challenge
+    @challenge = Challenge.new.type
+  end
+
   def passed?
     challenge.passed?
   end
 
   def to_s
     title
-  end
-
-  def set_challenge
-    @challenge = Challenge.new.type
   end
 end

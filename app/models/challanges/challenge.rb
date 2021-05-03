@@ -6,10 +6,10 @@ class Challenge
   end
 
   def pass!
-    @status = 'passed'
+    @status = :passed
   end
 
   def passed?
-    @status == 'passed'
+    @status == :passed
   end
 end

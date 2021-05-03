@@ -1,9 +1,9 @@
 class MathematicalQuiz < Challenge
-  attr_reader :room, :title, :first_number, :second_number
+  attr_reader :room, :title, :first_number, :second_number, :status
 
   def initialize
-    @title = 'MathematicalQuiz'
-    @status = 'not_passed'
+    @title = 'Mathematical Quiz'
+    @status = :not_passed
 
     @first_number = rand(10)
     @second_number = rand(10)

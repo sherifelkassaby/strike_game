@@ -10,7 +10,6 @@ class Player
   }.freeze
 
   def initialize(game:, current_level:)
-    @hp = 100
     @game = game
     @current_level = current_level
     @move = { type: 'room_or_level' }

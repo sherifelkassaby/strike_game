@@ -2,8 +2,6 @@ class Monster < Challenge
   attr_reader :room, :title
   attr_accessor :status
 
-  STATUSES = %w[not_passed passed].freeze
-
   def initialize
     @title = 'monster'
     @status = :not_passed
@@ -16,7 +14,7 @@ class Monster < Challenge
   def property
     {
       type: :select,
-      title: 'Choose your move?',
+      title: 'Choose your hit?',
       choices: [
         'Drop Kick',
         'Pocket Sand',
