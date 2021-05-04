@@ -2,7 +2,7 @@
 
 ## Description
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2be19a86-cba8-485a-8f0a-0d519a843474/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/2be19a86-cba8-485a-8f0a-0d519a843474/Untitled.png)
+![https://i.ibb.co/8KkTWjV/terminal.png](https://i.ibb.co/8KkTWjV/terminal.png)
 
 Role play terminal game to spend your time in a better way.
 
@@ -26,7 +26,7 @@ ruby main.rb
 
 These are the relation between models in the application.
 
-![https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fe0f439e-79bd-4477-bbb2-9a0d7a700ef5/Untitled.png](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/fe0f439e-79bd-4477-bbb2-9a0d7a700ef5/Untitled.png)
+![https://i.ibb.co/ZH99JX0/game-structure.png](https://i.ibb.co/ZH99JX0/game-structure.png)
 
 ## Future Enhancements
 
