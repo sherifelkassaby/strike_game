@@ -1,19 +1,20 @@
 # Strike Game
 
-## Description
-
 ![https://i.ibb.co/8KkTWjV/terminal.png](https://i.ibb.co/8KkTWjV/terminal.png)
+
+## Description
 
 Role play terminal game to spend your time in a better way.
 
-When the player enters the game he will be in `level 1` each level has three rooms each room has challenge in it. The player needs to pass all the three rooms to access the next level. The player can navigate freely from his level to previous levels. if the room has monster the passing of the room will be random.
+When the player enters the game he will be in level 1 each level has three rooms each room has challenge in it. The player needs to pass all the three rooms to access the next level. The player can navigate freely from his level to previous levels. if the room has monster the passing of the room will be random.
 
-## How To Start
 
-### Prerequisites
+## Prerequisites
 
 - Ruby installed on the system
 - Bundler installed on the system
+
+## How To Start
 
 ```bash
 bundle install
