@@ -10,7 +10,7 @@ module GameServices
     end
 
     def call
-      main_room_welcome_message
+      first_level_welcome_message
 
       game_sequence
     rescue Errors::Exit
@@ -19,8 +19,8 @@ module GameServices
 
     private
 
-    def main_room_welcome_message
-      puts('Welcome to the first room of the game')
+    def first_level_welcome_message
+      puts('Welcome to the first level of the game')
     end
 
     def game_sequence
@@ -34,6 +34,8 @@ module GameServices
     end
 
     def set_next_move
+      # move[:type] type of the moves the user could take.
+      # its value can be one of these [room_or_level, challenge_decision, challenge_accepted, challenge_passed]
       send("set_next_#{@player.move[:type]}")
     end
 
@@ -52,8 +54,12 @@ module GameServices
       choices << { name: 'exit', value: nil }
 
       puts('There are rooms ahead of you')
-      choice = @prompt.select('Choose where would you like to go?', choices, active_color: :red)
+      choice = prompt_select(title: 'Choose where would you like to go?', choices: choices)
       @player.move[:value] = choice
+    end
+
+    def prompt_select(title:, choices:)
+      @prompt.select(title, choices, active_color: :red)
     end
 
     def move_to_room_or_level
@@ -77,7 +83,7 @@ module GameServices
 
       question = challenge.passed? ? 'you already passed this challenge' : "You are ahead of #{challenge.title}?"
 
-      choice = @prompt.select(question, choices.concat(['go back']), active_color: :red)
+      choice = prompt_select(title: question, choices: choices.concat(['go back']))
       @player.move[:value] = choice
     end
 

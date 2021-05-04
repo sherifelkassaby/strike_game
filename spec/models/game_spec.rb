@@ -1,5 +1,6 @@
 describe Game do
-  let(:game) { Game.new }
+  let(:player) { Player.new }
+  let(:game) { Game.new(player) }
   let(:level) { Level.new(number: 0) }
 
   it 'has levels' do

@@ -10,7 +10,8 @@ describe GameServices::Init, :aggregate_failures do
   end
 
   context 'player is ready' do
-    let(:game) { Game.new }
+    let(:player) { Player.new }
+    let(:game) { Game.new(player) }
 
     before do
       allow_any_instance_of(GameServices::Init).to receive(:ready_prompt).and_return true

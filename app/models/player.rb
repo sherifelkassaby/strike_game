@@ -9,9 +9,7 @@ class Player
     'challenge_passed' => 'room_or_level'
   }.freeze
 
-  def initialize(game:, current_level:)
-    @game = game
-    @current_level = current_level
+  def initialize
     @move = { type: 'room_or_level' }
   end
 

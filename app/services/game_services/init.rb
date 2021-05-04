@@ -2,17 +2,16 @@ module GameServices
   class Init
     def initialize
       @prompt = TTY::Prompt.new
+      @player = Player.new
     end
 
     def call
       welcome_message
       return player_not_ready_rsp unless ready_prompt
 
-      @game = Game.new
+      @game = Game.new(@player)
 
-      create_first_level
-      create_rooms
-      assign_player
+      set_first_level_defaults
       set_player_name
 
       success_rsp
@@ -36,9 +35,23 @@ module GameServices
       action == 'Yes'
     end
 
+    def set_first_level_defaults
+      create_first_level
+      add_level_to_game
+      add_level_to_player
+      create_rooms
+    end
+
     def create_first_level
       @level1 = Level.new(number: 1)
+    end
+
+    def add_level_to_game
       @game.add_level(@level1)
+    end
+
+    def add_level_to_player
+      @player.current_level = @level1
     end
 
     def create_rooms
@@ -46,10 +59,6 @@ module GameServices
         title = "room 10#{i}"
         @level1.rooms << Room.new(title: title, level: @level1)
       end
-    end
-
-    def assign_player
-      @game.player = Player.new(game: @game, current_level: @level1)
     end
 
     def set_player_name

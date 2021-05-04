@@ -1,7 +1,9 @@
 describe Player do
-  let(:game) { Game.new }
   let(:level) { Level.new(number: 0) }
-  let(:player) { Player.new(game: game, current_level: level) }
+  let(:player) { Player.new }
+  let(:game) { Game.new(player) }
+
+  before { player.current_level = level }
 
   it 'has first move' do
     expect(player.move).to eq({ type: 'room_or_level' })
